@@ -82,22 +82,208 @@ def depthFirstSearch(problem):
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
 
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+    print("Start:", problem.getStartState())
+    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    print("Start's successors:", problem.getSuccessors(problem.getStartState())) --> returns list of tuples [(X,Y,Z),(X2,Y2,Z2),...]
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # create empty list of explored nodes
+    explored = []
+
+    # create dictionary to store path(s)
+    gameDict = {}
+    
+    # DFS uses stack so create the structure
+    gameStack = util.Stack()
+
+    # Example of node being passed into stack:
+    # [(x,y), Direction, Cost]
+    # .getStartState() returns (x,y)
+
+    # Push tuple onto stack (will be popped off immediately) using action=Stop and cost=0 to indicate start state
+    startNode = (problem.getStartState(), "Stop" , 0)
+    gameStack.push(startNode)
+    gameDict[startNode] = "Start"
+
+    # While the stack is not empty...
+    while not gameStack.isEmpty():
+        # Pop node on top of stack -- node will be of type tuple mentioned above
+        node = gameStack.pop()
+
+        # Check if popped node is the goal state -- get (x,y) coords from first index in tuple and pass into check function
+        xyState = node[0]
+
+        # if the current state is the goal state,
+        if problem.isGoalState(xyState):
+            #print("GOAL!")
+            backwardPath = []
+            curr = node
+
+            while not curr == "Start":
+                backwardPath.append(curr[1]) # append the action
+                curr = gameDict[curr] # get nodes parent 
+            
+            backwardPath = backwardPath[:-1] # remove "stop" from list of actions
+            backwardPath.reverse() # reverse the list to get correct order of action
+            return backwardPath # return the list of actions to take
+        
+        # if here that means we are not in goal state, so check if we have been here before
+        if xyState not in explored:
+            # if here, state has not been explored, so now add it to explored list
+            explored.append(xyState)
+
+            # get children (list of tuples) of current state
+            successors = problem.getSuccessors(xyState)
+
+            # push each child node onto stack, then visit the last one added
+            for s in successors:
+                # get xy coord of child
+                tempCoord = s[0]
+
+                if tempCoord not in explored:
+                    gameStack.push(s)
+                    gameDict[s] = node
+
+    # Return false iff no path found from start to goal
+    return False
+        
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # create empty list of explored nodes
+    explored = []
 
+    # create dictionary to store path(s)
+    gameDict = {}
+    
+    # BFS uses queue so create the structure
+    gameQ = util.Queue()
+
+    # Example of node being passed into stack:
+    # [(x,y), Direction, Cost]
+    # .getStartState() returns (x,y)
+
+    # Push tuple onto queue (will be popped off immediately) using action=Stop and cost=0 to indicate start state
+    startNode = (problem.getStartState(), "Stop" , 0)
+    gameQ.push(startNode)
+    gameDict[startNode] = "Start"
+
+    # While the queue is not empty...
+    while not gameQ.isEmpty():
+        # Pop node on top of queue -- node will be of type tuple mentioned above
+        node = gameQ.pop()
+
+        # Check if popped node is the goal state -- get (x,y) coords from first index in tuple and pass into check function
+        xyState = node[0]
+
+        # if the current state is the goal state,
+        if problem.isGoalState(xyState):
+            #print("GOAL!")
+            backwardPath = []
+            curr = node
+
+            while not curr == "Start":
+                backwardPath.append(curr[1]) # append the action
+                curr = gameDict[curr] # get nodes parent
+            
+            backwardPath = backwardPath[:-1] # remove "stop" from list of actions
+            backwardPath.reverse() # reverse the list to get correct order of action
+            return backwardPath # return the list of actions to take
+        
+        # if here that means we are not in goal state, so check if we have been here before
+        if xyState not in explored:
+            # if here, state has not been explored, so now add it to explored list
+            explored.append(xyState)
+
+            # get children (list of tuples) of current state
+            successors = problem.getSuccessors(xyState)
+
+            # push each child node onto stack, then visit the last one added
+            for s in successors:
+                # get xy coord of child
+                tempCoord = s[0]
+
+                if tempCoord not in explored:
+                    gameQ.push(s)
+                    gameDict[s] = node
+    # Return false iff no path found from start to goal
+    return False
+                    
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # create empty list of explored nodes
+    explored = []
+
+    # create dictionary to store path(s)
+    gameDict = {}
+    
+    # UCS uses priority queue so create the structure
+    gamePQ = util.PriorityQueue()
+
+    # Example of node being passed into stack:
+    # [(x,y), Direction, Cost]
+    # .getStartState() returns (x,y)
+
+    # Push tuple into queue (will be popped off immediately) using action=Stop and cost=0 to indicate start state
+    startNode = (problem.getStartState(), "Stop" , 0)
+    gamePQ.push(startNode,0)
+    gameDict[startNode] = "Start"
+
+    # While the queue is not empty...
+    while not gamePQ.isEmpty():
+        # Pop node on top of queue -- node will be of type tuple mentioned above
+        node = gamePQ.pop()
+
+        # Check if popped node is the goal state -- get (x,y) coords from first index in tuple and pass into check function
+        xyState = node[0]
+
+        # if the current state is the goal state,
+        if problem.isGoalState(xyState):
+            #print("GOAL!")
+            backwardPath = []
+            curr = node
+
+            while not curr == "Start":
+                backwardPath.append(curr[1]) # append the action
+                curr = gameDict[curr] # get nodes parent
+            
+            backwardPath = backwardPath[:-1] # remove "stop" from list of actions
+            backwardPath.reverse() # reverse the list to get correct order of action
+            return backwardPath # return the list of actions to take
+        
+        # if here that means we are not in goal state, so check if we have been here before
+        if xyState not in explored:
+            # if here, state has not been explored, so now add it to explored list
+            explored.append(xyState)
+
+            # get children (list of tuples) of current state
+            successors = problem.getSuccessors(xyState)
+
+            for s in successors:
+                # get xy coord of child
+                tempCoord = s[0]
+
+                # should be in a function...sorry.. gets cost of path so far by creating list and using getCostOfActions()
+                if tempCoord not in explored:
+                    parents = [] # temp path to trace each successor's cost
+                    curr = s # make current node the successor in question
+                    gameDict[s] = node # add successors parent before tracing path
+
+                    while not curr == "Start":
+                        parents.append(curr[1]) # append the action
+                        curr = gameDict[curr] # get nodes parent
+                        #print(curr)
+                    
+                    parents = parents[:-1] # remove "stop" from list of actions
+                    parents.reverse() # reverse the list to get correct order of action  
+
+                    newCost = problem.getCostOfActions(parents) # gets cost 
+
+                    gamePQ.push(s,newCost) # push node and cost into pq
+                    
+    # Return false iff no path found from start to goal
+    return False
 
 def nullHeuristic(state, problem=None):
     """
@@ -109,8 +295,80 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # create empty list of explored nodes
+    explored = []
 
+    # create dictionary to store path(s)
+    gameDict = {}
+    
+    # UCS uses priority queue so create the structure
+    gamePQ = util.PriorityQueue()
+
+    # Example of node being passed into stack:
+    # [(x,y), Direction, Cost]
+    # .getStartState() returns (x,y)
+
+    # Push tuple into queue (will be popped off immediately) using action=Stop and cost=0 to indicate start state
+    startNode = (problem.getStartState(), "Stop" , 0)
+    gamePQ.push(startNode,0)
+    gameDict[startNode] = "Start"
+
+    # While the queue is not empty...
+    while not gamePQ.isEmpty():
+        # Pop node on top of queue -- node will be of type tuple mentioned above
+        node = gamePQ.pop()
+
+        # Check if popped node is the goal state -- get (x,y) coords from first index in tuple and pass into check function
+        xyState = node[0]
+
+        # if the current state is the goal state,
+        if problem.isGoalState(xyState):
+            #print("GOAL!")
+            backwardPath = []
+            curr = node
+
+            while not curr == "Start":
+                backwardPath.append(curr[1]) # append the action
+                curr = gameDict[curr] # get nodes parent
+            
+            backwardPath = backwardPath[:-1] # remove "stop" from list of actions
+            backwardPath.reverse() # reverse the list to get correct order of action
+            return backwardPath # return the list of actions to take
+        
+        # if here that means we are not in goal state, so check if we have been here before
+        if xyState not in explored:
+            # if here, state has not been explored, so now add it to explored list
+            explored.append(xyState)
+
+            # get children (list of tuples) of current state
+            successors = problem.getSuccessors(xyState)
+
+            for s in successors:
+                # get xy coord of child
+                tempCoord = s[0]
+
+                # should be in a function...sorry.. gets cost of path so far by creating list and using getCostOfActions()
+                if tempCoord not in explored:
+                    parents = [] # temp path to trace each successor's cost
+                    curr = s # make current node the successor in question
+                    gameDict[s] = node # add successors parent before tracing path
+
+                    while not curr == "Start":
+                        parents.append(curr[1]) # append the action
+                        curr = gameDict[curr] # get nodes parent
+                        #print(curr)
+                    
+                    parents = parents[:-1] # remove "stop" from list of actions
+                    parents.reverse() # reverse the list to get correct order of action  
+
+                    newCost = problem.getCostOfActions(parents) # gets cost 
+
+                    # f(x) = g(x) + h(x) = newCost + heuristic at that point
+                    # 
+                    gamePQ.push(s,newCost + heuristic(tempCoord,problem)) # push node and cost + heuristic into pq
+                    
+    # Return false iff no path found from start to goal
+    return False
 
 # Abbreviations
 bfs = breadthFirstSearch
