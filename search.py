@@ -175,6 +175,7 @@ def breadthFirstSearch(problem):
 
         # Check if popped node is the goal state -- get (x,y) coords from first index in tuple and pass into check function
         xyState = node[0]
+        #print "NODE: ", node
 
         # if the current state is the goal state,
         if problem.isGoalState(xyState):
@@ -200,6 +201,7 @@ def breadthFirstSearch(problem):
 
             # push each child node onto stack, then visit the last one added
             for s in successors:
+                #print "SUCCESSOR: ", s
                 # get xy coord of child
                 tempCoord = s[0]
 

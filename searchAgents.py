@@ -305,7 +305,7 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         # If the number of corners left is 0, then we have reached all 4 corners
-        if (len(state[1]) == 0):
+        if not state[1]:
             return True
         else:
             return False
@@ -340,8 +340,9 @@ class CornersProblem(search.SearchProblem):
                 cost = 1
 
                 if nextState in state[1]:
-                    newCorners = list(state[1]).remove(nextState)
-                    successors.append( ((nextState, newCorners), action, cost) )
+                    newCorners = list(state[1])
+                    newCorners.remove(nextState)
+                    successors.append( ((nextState, tuple(newCorners)), action, cost) )
                 else:
                     successors.append( ((nextState, state[1]), action, cost) )
 
@@ -379,7 +380,25 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    # initialized start values
+    heuristic = 0
+    start = state[0]
+    remainingCorners = list(state[1])
+    # calculate cumulative distance to all remain corners, starting from the nearest one
+    while remainingCorners:
+        distances = []
+        for corner in remainingCorners:
+            distances.append(manhattanDistance(start, corner))
+        heuristic += min(distances)
+        closestCornerIndex = distances.index(min(distances))
+        start = remainingCorners[closestCornerIndex]
+        del remainingCorners[closestCornerIndex]
+
+    return heuristic
+
+def manhattanDistance(p1,p2):
+        return abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
