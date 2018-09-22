@@ -501,12 +501,31 @@ def foodHeuristic(state, problem):
     distances = []
     for food in foodList:
         distances.append(euclideanDistance(position, food))
-    # return the sum of the closest food distance and amount of foods remaining
+    
     if distances:
-        return min(distances) + len(foodList) - 1
-    # goal state, foodList should be empty and so should return 0
+        #extract the closest distance
+        closestDistance = min(distances)
+
+        # calculate the average distance for the rest of the foods after eating the closest food
+        closestFoodIndex = distances.index(closestDistance)
+        #extract position of closest food
+        closestFood = foodList[closestFoodIndex]  
+        foodList.remove(closestFood)
+        remainingDistances = []
+        # calculate the distances from every other food to the closest food
+        for food in foodList: 
+            remainingDistances.append(euclideanDistance(closestFood, food))
+        if remainingDistances:
+            avgRemainingDistances = sum(remainingDistances) / len(remainingDistances)
+        else:
+            avgRemainingDistances = 0
+    
+    # no food left
     else:
-        return len(foodList)
+        return 0
+    
+    #return heuristic, which is the closest food distance summed with the avg distance of the other remaining foods
+    return closestDistance + avgRemainingDistances
     
 def euclideanDistance(p1,p2):
     return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
