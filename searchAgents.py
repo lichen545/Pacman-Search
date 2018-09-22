@@ -40,6 +40,7 @@ from game import Actions
 import util
 import time
 import search
+import math
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
@@ -492,7 +493,24 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    
+    #print "food grid: ", foodGrid.asList()
+
+    #grab the locations of all foods
+    foodList = foodGrid.asList()
+    distances = []
+    for food in foodList:
+        distances.append(euclideanDistance(position, food))
+    # return the sum of the closest food distance and amount of foods remaining
+    if distances:
+        return min(distances) + len(foodList) - 1
+    # goal state, foodList should be empty and so should return 0
+    else:
+        return len(foodList)
+    
+def euclideanDistance(p1,p2):
+    return math.sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
+    
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
